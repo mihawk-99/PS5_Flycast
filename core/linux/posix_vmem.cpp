@@ -20,6 +20,15 @@
 #define MAP_NOSYNC 0
 #endif
 
+#if defined(__PROSPERO__)
+// Executable memory is provided by the PS5 RetroArch title runtime through
+// the SDK's platform layer (ps5platform/exec.h), the same mechanism the
+// PPSSPP and Dolphin ports use: ps5_exec_allocate() returns RWX memory from
+// 4MB exec pools (small allocations) or a dedicated mapping (large ones);
+// ps5_exec_release() frees it.
+#include <ps5platform/exec.h>
+#endif
+
 #ifdef __ANDROID__
 #include <linux/ashmem.h>
 
@@ -248,6 +257,15 @@ void create_mappings(const Mapping *vmem_maps, unsigned nummaps) {
 // Prepares the code region for JIT operations, thus marking it as RWX
 bool prepare_jit_block(void *code_area, size_t size, void **code_area_rwx)
 {
+#if defined(__PROSPERO__)
+	// The PS5 W^X policy doesn't allow turning regular memory executable, so
+	// the title-provided exec allocator supplies the block and the static
+	// code_area is ignored.
+	static const char jit_anchor = 0;
+	(void)code_area;
+	*code_area_rwx = ps5_exec_allocate(size, (uintptr_t)&jit_anchor);
+	return *code_area_rwx != nullptr;
+#else
     // Try to map is as RWX, this fails apparently on OSX (and perhaps other systems?)
 	if (code_area != nullptr && region_set_exec(code_area, size))
     {
@@ -279,11 +297,18 @@ bool prepare_jit_block(void *code_area, size_t size, void **code_area_rwx)
 #endif
     *code_area_rwx = ret_ptr;
     return true;
+#endif // __PROSPERO__
 }
 
 void release_jit_block(void *code_area, size_t size)
 {
+#if defined(__PROSPERO__)
+	(void)size;
+	if (code_area != nullptr)
+		ps5_exec_release(code_area);
+#else
 	munmap(code_area, size);
+#endif
 }
 
 // Use two addr spaces: need to remap something twice, therefore use allocate_shared_filemem()
