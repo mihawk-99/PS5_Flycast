@@ -89,7 +89,9 @@ Option<bool> IntegerScale("");
 Option<bool> LinearInterpolation("", true);
 Option<bool> VSync("", true);
 Option<bool> ThreadedRendering(CORE_OPTION_NAME "_threaded_rendering", true);
-Option<int> AnisotropicFiltering(CORE_OPTION_NAME "_anisotropic_filtering");
+// The option values are the filtering levels, not their index: a plain
+// Option<int> took "16" as 4 and the default "4" as 2.
+IntOption AnisotropicFiltering(CORE_OPTION_NAME "_anisotropic_filtering", 4);
 Option<int> TextureFiltering(CORE_OPTION_NAME "_texture_filtering");
 Option<bool> PowerVR2Filter(CORE_OPTION_NAME "_pvr2_filtering");
 Option<int64_t> PixelBufferSize("", 512_MB);

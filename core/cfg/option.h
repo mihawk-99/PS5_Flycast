@@ -468,7 +468,9 @@ extern Option<bool> IntegerScale;
 extern Option<bool> LinearInterpolation;
 extern Option<bool> VSync;
 extern Option<int64_t> PixelBufferSize;
+#ifndef LIBRETRO
 extern Option<int> AnisotropicFiltering;
+#endif
 extern Option<int> TextureFiltering; // 0: default, 1: force nearest, 2: force linear
 extern Option<bool> ThreadedRendering;
 extern Option<bool> DupeFrames;

@@ -209,3 +209,4 @@ extern IntOption TextureUpscale;
 extern IntOption MaxFilteredTextureSize;
 extern IntOption PerPixelLayers;
 extern IntOption Sh4Clock;
+extern IntOption AnisotropicFiltering;
