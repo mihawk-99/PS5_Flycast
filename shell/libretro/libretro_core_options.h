@@ -318,6 +318,9 @@ struct retro_core_option_v2_definition option_defs_us[] = {
       },
 #ifdef LOW_RES
       "320x240",
+#elif defined(__PROSPERO__)
+      /* PS5: x4.5, which the console's GPU holds at full speed. */
+      "2880x2160",
 #else
       "640x480",
 #endif
@@ -385,6 +388,9 @@ struct retro_core_option_v2_definition option_defs_us[] = {
       },
 #if defined(LOW_END)
       "per-strip (fast, least accurate)",
+#elif defined(__PROSPERO__)
+      /* PS5: per-pixel (order-independent) transparency, on Vulkan. */
+      "per-pixel (accurate)",
 #else
       "per-triangle (normal)",
 #endif
@@ -510,7 +516,11 @@ struct retro_core_option_v2_definition option_defs_us[] = {
          { "16",  NULL },
          { NULL, NULL },
       },
+#ifdef __PROSPERO__
+      "16",
+#else
       "4",
+#endif
    },
    {
       CORE_OPTION_NAME "_texture_filtering",
