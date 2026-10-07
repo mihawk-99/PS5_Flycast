@@ -474,7 +474,7 @@ struct PTYPipe : public SerialPort::Pipe
 
 	void init()
 	{
-#if defined(__unix__) || defined(__APPLE__)
+#if (defined(__unix__) || defined(__APPLE__)) && !defined(__PROSPERO__)
 		if (config::SerialConsole && config::SerialPTY && tty == 1)
 		{
 			tty = open("/dev/ptmx", O_RDWR | O_NDELAY | O_NOCTTY | O_NONBLOCK);
